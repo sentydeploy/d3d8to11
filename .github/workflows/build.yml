@@ -1,0 +1,28 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Build (Release x86)
+        run: msbuild d3d8to11.sln /p:Configuration=Release /p:Platform=x86 /m /v:minimal
+
+      - name: List output
+        run: dir bin
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: d3d8to11-x86-release
+          path: bin/
+          if-no-files-found: error
